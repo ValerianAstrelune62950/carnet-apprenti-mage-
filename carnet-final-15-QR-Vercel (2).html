@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Carnet de l'Apprenti Mage — L'Académie des Étoiles Brisées</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Crimson+Text:ital@0;1&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; background: #0A0818; color: #FDF8EE; }
+
+:root {
+  --GOLD: #C9A84C;
+  --SOFT_G: #F0D87A;
+  --NAVY: #0A0818;
+  --LTVIO: #7B5EA7;
+  --CREAM: #FDF8EE;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pop { 0% { transform: scale(0.8); } 100% { transform: scale(1); } }
+@keyframes twinkle { from { opacity: 0.15; } to { opacity: 0.65; } }
+@keyframes eclatIgnite { 
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); box-shadow: 0 0 30px var(--SOFT_G); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+body { font-family: 'Crimson Text', Georgia, serif; background: linear-gradient(135deg, #0A0818 0%, #1a0f2e 100%); overflow-x: hidden; }
+
+.screen { display: none; }
+.screen.active { display: block; animation: fadeIn 0.3s; }
+.container { max-width: 600px; margin: 0 auto; padding: 20px; }
+
+/* Home Screen */
+.home-screen { text-align: center; padding: 40px 20px; }
+.stars-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.star { position: absolute; border-radius: 50%; background: var(--SOFT_G); }
+.content-wrapper { position: relative; z-index: 1; }
+.header-icon { font-size: 60px; margin-bottom: 20px; }
+.title { font-family: 'Cinzel', serif; font-size: 28px; color: var(--SOFT_G); margin: 20px 0; letter-spacing: 0.08em; font-weight: 700; }
+.subtitle { font-size: 16px; color: var(--LTVIO); line-height: 1.6; margin: 24px auto; max-width: 400px; }
+.intro-text { font-size: 14px; color: var(--CREAM); margin: 20px 0; }
+
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 30px; }
+.eclat-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin: 30px 0; }
+.eclat-btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(75, 46, 131, 0.25);
+  border: 2px solid #4B2E8355;
+  cursor: pointer;
+  font-size: 22px;
+  transition: all 0.4s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.eclat-btn.filled {
+  background: radial-gradient(circle, var(--SOFT_G), var(--GOLD));
+  border-color: var(--GOLD);
+  box-shadow: 0 0 12px var(--GOLD)88;
+}
+.eclat-btn.filled.just-unlocked { animation: eclatIgnite 0.9s ease-out; }
+
+.activity-card {
+  cursor: pointer;
+  padding: 20px;
+  background: rgba(75, 46, 131, 0.3);
+  border: 1px solid var(--LTVIO);
+  border-radius: 12px;
+  transition: all 0.3s;
+  text-align: center;
+}
+.activity-card:hover {
+  background: rgba(196, 168, 76, 0.2);
+  border-color: var(--GOLD);
+}
+.activity-emoji { font-size: 36px; margin-bottom: 12px; }
+.activity-name { font-family: 'Cinzel', serif; font-size: 13px; color: var(--SOFT_G); margin-bottom: 6px; letter-spacing: 0.08em; }
+.activity-desc { font-size: 12px; color: var(--LTVIO); }
+
+.floating-secret {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 16px 20px;
+  background: var(--GOLD);
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(196, 168, 76, 0.3);
+  z-index: 1000;
+  display: none;
+  animation: pop 0.4s;
+}
+.floating-secret-text { font-family: 'Cinzel', serif; color: #0A0818; font-weight: 700; margin-bottom: 8px; font-size: 13px; }
+.floating-secret button {
+  background: #0A0818;
+  color: var(--GOLD);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+  font-family: 'Crimson Text', serif;
+  font-size: 12px;
+  transition: all 0.3s;
+}
+.floating-secret button:hover { background: var(--GOLD); color: #0A0818; }
+
+/* Activity Screen */
+.activity-screen { padding: 20px; }
+.activity-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+.back-btn { background: none; border: none; color: var(--GOLD); font-size: 28px; cursor: pointer; padding: 8px; }
+.progress-text { font-family: 'Cinzel', serif; font-size: 12px; color: var(--GOLD); letter-spacing: 0.1em; }
+
+.form-group { margin-bottom: 20px; }
+.label { font-family: 'Cinzel', serif; font-size: 11px; color: var(--GOLD); letter-spacing: 0.1em; margin-bottom: 8px; display: block; }
+input, textarea, select {
+  width: 100%;
+  padding: 12px;
+  background: rgba(196, 168, 76, 0.1);
+  border: 1px solid var(--LTVIO);
+  border-radius: 8px;
+  color: var(--CREAM);
+  font-family: 'Crimson Text', serif;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+textarea { resize: vertical; min-height: 120px; }
+input:focus, textarea:focus, select:focus { outline: none; border-color: var(--GOLD); background: rgba(196, 168, 76, 0.15); }
+
+.btn {
+  padding: 12px 20px;
+  background: var(--GOLD);
+  color: #0A0818;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  transition: all 0.3s;
+}
+.btn:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(196, 168, 76, 0.4); }
+.btn.secondary {
+  background: transparent;
+  color: var(--GOLD);
+  border: 1px solid var(--GOLD);
+}
+.btn.secondary:hover { background: rgba(196, 168, 76, 0.15); }
+
+.btn-group { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+.btn-group .btn { flex: 1; min-width: 100px; }
+
+.result-box {
+  margin-top: 20px;
+  padding: 20px;
+  background: rgba(196, 168, 76, 0.1);
+  border-radius: 12px;
+  font-family: 'Crimson Text', serif;
+  font-size: 13px;
+  color: var(--LTVIO);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  line-height: 1.6;
+  border-left: 3px solid var(--GOLD);
+}
+
+canvas {
+  width: 100%;
+  height: 300px;
+  background: #0A0818;
+  border: 2px solid var(--GOLD);
+  border-radius: 12px;
+  margin: 16px 0;
+  cursor: crosshair;
+}
+
+.quiz-question { font-size: 14px; color: var(--CREAM); margin-bottom: 20px; line-height: 1.6; }
+.quiz-options { display: flex; flex-direction: column; gap: 12px; }
+.quiz-option {
+  padding: 12px;
+  background: rgba(196, 168, 76, 0.1);
+  border: 1px solid var(--LTVIO);
+  border-radius: 8px;
+  color: var(--LTVIO);
+  cursor: pointer;
+  font-family: 'Crimson Text', serif;
+  font-size: 13px;
+  transition: all 0.3s;
+  text-align: left;
+}
+.quiz-option:hover {
+  background: rgba(196, 168, 76, 0.2);
+  border-color: var(--GOLD);
+}
+.quiz-option.selected {
+  background: var(--GOLD);
+  color: #0A0818;
+  border-color: var(--GOLD);
+}
+
+/* Secret Screen */
+.secret-screen {
+  text-align: center;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, rgba(75, 46, 131, 0.1), rgba(196, 168, 76, 0.05));
+  border-radius: 16px;
+  margin-top: 20px;
+}
+.secret-icon { font-size: 50px; margin-bottom: 20px; }
+.secret-badge { font-family: 'Cinzel', serif; font-size: 11px; color: var(--GOLD); letter-spacing: 0.15em; margin-bottom: 8px; }
+.secret-title { font-family: 'Cinzel', serif; font-size: 22px; color: var(--SOFT_G); margin-bottom: 30px; font-weight: 500; }
+
+.video-wrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%;
+  margin-bottom: 30px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid var(--GOLD);
+  box-shadow: 0 0 24px rgba(196, 168, 76, 0.25);
+  background: #0A0818;
+}
+.video-wrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.secret-text {
+  font-family: 'Crimson Text', serif;
+  font-style: italic;
+  font-size: 13px;
+  color: var(--LTVIO);
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+.secret-text strong { color: var(--GOLD); }
+
+.cta-box {
+  background: rgba(26, 18, 64, 0.7);
+  border: 1.5px solid var(--LTVIO);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.cta-title { font-family: 'Cinzel', serif; font-size: 13px; color: var(--SOFT_G); margin-bottom: 12px; letter-spacing: 0.08em; font-weight: 700; }
+.cta-subtitle { font-size: 12px; color: var(--GOLD); font-weight: 700; margin-bottom: 8px; }
+.cta-text { font-size: 12px; color: var(--LTVIO); }
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: none;
+  background: rgba(10, 8, 24, 0.85);
+  animation: fadeIn 0.3s;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.active { display: flex; }
+.modal-content {
+  text-align: center;
+  animation: pop 0.4s;
+}
+.modal-emoji { font-size: 60px; margin-bottom: 12px; }
+.modal-title { font-family: 'Cinzel', serif; font-size: 18px; color: var(--GOLD); }
+.modal-text { font-family: 'Crimson Text', serif; font-style: italic; font-size: 13px; color: var(--LTVIO); margin-top: 8px; }
+
+/* ===== MODALE PARTAGE + QR CODE ===== */
+.share-qr-box {
+  width: min(92vw, 380px);
+  background: #1a0f2e;
+  border: 2px solid var(--GOLD);
+  border-radius: 16px;
+  padding: 24px 20px;
+  text-align: center;
+  box-shadow: 0 0 40px rgba(201, 168, 76, 0.35);
+  animation: pop 0.3s ease-out;
+}
+.share-qr-title {
+  font-family: 'Cinzel', serif;
+  color: var(--SOFT_G);
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+.share-qr-subtitle {
+  color: var(--LTVIO);
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+#shareQRCode {
+  width: 220px;
+  height: 220px;
+  margin: 0 auto 16px;
+  padding: 10px;
+  background: #fff;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#shareQRCode img, #shareQRCode canvas {
+  max-width: 200px;
+  max-height: 200px;
+}
+.share-qr-url {
+  color: var(--CREAM);
+  font-size: 11px;
+  line-height: 1.4;
+  word-break: break-all;
+  background: rgba(196,168,76,0.08);
+  border: 1px solid var(--LTVIO);
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 14px;
+}
+.share-qr-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.share-qr-actions .btn {
+  flex: 1;
+  min-width: 120px;
+}
+
+</style>
+</head>
+<body>
+
+<!-- Stars Background -->
+<div class="stars-bg" id="starsContainer"></div>
+
+<!-- Modal Prénom au démarrage -->
+<div id="prenomModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); z-index: 10000; display: flex; align-items: center; justify-content: center;">
+  <div style="background: #1a0f2e; border: 4px solid #C9A84C; padding: 40px; border-radius: 16px; text-align: center; max-width: 85%; box-shadow: 0 0 40px rgba(201, 168, 76, 0.8);">
+    <p style="color: #F0D87A; font-size: 24px; margin-bottom: 10px; font-weight: bold; font-family: 'Cinzel', serif;">Bienvenue ✨</p>
+    <p style="color: #C9A84C; font-size: 16px; margin-bottom: 30px; font-family: 'Crimson Text', serif;">Quel est ton prénom ?</p>
+    <input type="text" id="prenomInput" placeholder="Écris ton prénom..." style="width: 100%; padding: 12px; background: rgba(196, 168, 76, 0.1); border: 2px solid #C9A84C; border-radius: 8px; color: #FDF8EE; font-size: 16px; margin-bottom: 20px; font-family: 'Crimson Text', serif; text-align: center;" autofocus>
+    <button onclick="savePrenomAndStart()" style="width: 100%; background: #C9A84C; color: #0A0818; padding: 15px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; font-family: 'Cinzel', serif;">Commencer ✓</button>
+  </div>
+</div>
+
+<!-- Home Screen -->
+<div id="homeScreen" class="screen">
+  <div class="content-wrapper">
+    <div class="home-screen">
+      <div class="header-icon">📖</div>
+      <div class="title">BIENVENUE</div>
+      <div class="intro-text">dans le Carnet de l'Apprenti Mage</div>
+      <div class="subtitle">Tu as complété L'Académie des Étoiles Brisées.<br>Maintenant, c'est à toi de devenir mage !<br><br><strong style="color: var(--SOFT_G);">Complète les 7 activités</strong> et déverrouille un secret...</div>
+      
+      <div class="eclat-container" id="eclatContainer"></div>
+      
+      <div class="grid" id="gridContainer"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Activity Screen -->
+<div id="activityScreen" class="screen">
+  <div class="activity-header">
+    <button class="back-btn" onclick="goHome()">←</button>
+    <span class="progress-text"><span id="progressNum">1</span>/7</span>
+    <div></div>
+  </div>
+  <div class="container">
+    <div id="activityContent"></div>
+  </div>
+</div>
+
+<!-- Secret Screen -->
+<div id="secretScreen" class="screen">
+  <div class="container">
+    <div class="secret-screen">
+      <div class="secret-icon">🌟</div>
+      <div class="secret-badge">SECRET DÉVERROUILLÉ</div>
+      <div class="secret-title">Teaser — Tome II</div>
+      
+      <div class="video-wrapper" style="background: rgba(201, 168, 76, 0.15); border: 2px solid #C9A84C; border-radius: 10px; padding: 30px; text-align: center;">
+        <div style="font-size: 24px; margin-bottom: 15px;">🎬</div>
+        <p style="color: #F0D87A; margin-bottom: 20px; font-size: 16px; font-weight: bold;">Teaser — Tome II</p>
+        <a href="https://www.youtube.com/watch?v=a0OyBf62rd4" target="_blank" class="btn" style="text-decoration: none; display: inline-block;">▶️ Regarder sur YouTube</a>
+      </div>
+      
+      <div class="secret-text">
+        🎬 Bravo ! Tu as déverrouillé le teaser secret du Tome II : <strong>La Carte des Sept Vents</strong><br><br>
+        Cette vidéo est accessible UNIQUEMENT pour ceux qui ont complété le Carnet de l'Apprenti Mage.
+      </div>
+      
+      <div class="cta-box">
+        <div class="cta-title">✨ TOME II À PARAÎTRE</div>
+
+        <div class="cta-text">📬 Inscris-toi pour être averti dès sa sortie</div>
+      </div>
+      
+      <div class="btn-group">
+        <a href="https://substack.com/@valerianastrelune/subscribe" target="_blank" class="btn" style="text-decoration: none; display: inline-block;">📧 S'inscrire à la Newsletter</a>
+        <button class="btn secondary" onclick="shareApp()">📤 Partager</button>
+      </div>
+      
+      <div class="btn-group" style="margin-top: 12px;">
+        <button class="btn secondary" onclick="goHome()" style="width: 100%;">← Retour au Carnet</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modale Partager avec QR Code -->
+<div id="shareQrModal" class="modal-overlay" onclick="closeShareQr(event)">
+  <div class="share-qr-box" onclick="event.stopPropagation()">
+    <div class="share-qr-title">✨ Partager le Carnet</div>
+    <div class="share-qr-subtitle">Scanne ce QR code pour ouvrir L'Académie des Étoiles Brisées</div>
+    <div id="shareQRCode"></div>
+    <div class="share-qr-url">https://carnet-de-lapprenti-mage.vercel.app</div>
+    <div class="share-qr-actions">
+      <button class="btn" onclick="shareVercelLink()">📤 Partager le lien</button>
+      <button class="btn secondary" onclick="copyVercelLink()">📋 Copier le lien</button>
+    </div>
+    <div class="share-qr-actions" style="margin-top:10px;">
+      <button class="btn secondary" onclick="closeShareQr()">✕ Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="modal" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-emoji">⭐</div>
+    <div class="modal-title">Éclat collecté !</div>
+    <div class="modal-text"><span id="modalCount">1</span>/7 éclats</div>
+  </div>
+</div>
+
+<!-- Floating Secret Button -->
+<div class="floating-secret" id="floatingSecret">
+  <div class="floating-secret-text">🔓 Secret Déverrouillé !</div>
+  <button onclick="showSecret()">Voir le Teaser</button>
+</div>
+
+<script>
+const ACTIVITIES = [
+  { id: 0, emoji: '⭐', name: 'Ta Fiche Magique', desc: 'Crée ton identité de mage' },
+  { id: 1, emoji: '✨', name: 'Invente Ton Sort', desc: "L'IA génère ton sort unique" },
+  { id: 2, emoji: '🌟', name: 'Ta Constellation', desc: 'Dessine et nomme tes étoiles' },
+  { id: 3, emoji: '📜', name: 'Ton Parchemin', desc: 'Écris ta loi de mage' },
+  { id: 4, emoji: '📖', name: 'Journal de Bord', desc: 'La nuit de la lettre magique' },
+  { id: 5, emoji: '🧙', name: 'Ton Personnage', desc: "L'IA décrit ton mage" },
+  { id: 6, emoji: '💎', name: 'Quiz Final', desc: 'Questions sur le Tome I' }
+];
+
+const PREFIXES = ['Éclat de', 'Souffle de', 'Murmure de', 'Envol de', 'Étincelle de', 'Vague de', 'Frisson de', 'Lueur de'];
+const SUFFIXES = ["l'Aube", 'la Nuit Étoilée', 'Cristal', "l'Infini", 'la Tempête Douce', "l'Écho Perdu", 'la Comète', "l'Ombre Dorée"];
+const MOTS_LATINS = ['Lumina', 'Ventus', 'Stellaris', 'Aqua', 'Ignis', 'Terra', 'Umbra', 'Aurora'];
+const MOTS_ACTION = ['volare', 'brillare', 'fluere', 'vincere', 'cantare', 'mutare', 'surgere', 'vivere'];
+const GESTES = [
+  'Trace un cercle lumineux dans l\'air, puis pointe vers le ciel.',
+  'Croise les bras devant toi, puis ouvre-les d\'un coup sec.',
+  'Dessine une spirale avec ton doigt, du centre vers l\'extérieur.',
+  'Lève la main droite, ferme le poing, puis ouvre lentement les doigts.',
+  'Trace un huit couché, comme un ruban qui flotte.',
+  'Frappe deux fois dans tes mains, puis écarte-les doucement.'
+];
+
+let completedActivities = new Set(); // Tracker activités complétées par INDEX
+let currentActivity = null;
+
+function getCompleted() { return completedActivities.size; }
+function isActivityDone(idx) { return completedActivities.has(idx); }
+
+// Initialize stars background
+function initStars() {
+  const container = document.getElementById('starsContainer');
+  for (let i = 0; i < 50; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    star.style.width = (i % 5 === 0 ? 3 : i % 3 === 0 ? 2 : 1.5) + 'px';
+    star.style.height = star.style.width;
+    star.style.left = Math.random() * 100 + '%';
+    star.style.top = Math.random() * 100 + '%';
+    star.style.opacity = 0.15 + Math.random() * 0.5;
+    star.style.animation = `twinkle ${2 + Math.random() * 4}s ${Math.random() * 4}s infinite alternate`;
+    container.appendChild(star);
+  }
+}
+
+// Render grid
+function renderGrid() {
+  const grid = document.getElementById('gridContainer');
+  grid.innerHTML = ACTIVITIES.map((a, i) => {
+    const done = isActivityDone(i);
+    return `
+    <div class="activity-card" onclick="${done ? '' : `startActivity(${i})`}" style="${done ? 'opacity: 0.5; cursor: not-allowed; border-color: var(--GOLD);' : ''}">
+      <div class="activity-emoji">${done ? '✓' : a.emoji}</div>
+      <div class="activity-name">${a.name}</div>
+      <div class="activity-desc">${done ? '✓ Complétée' : a.desc}</div>
+    </div>
+  `}).join('');
+}
+
+// Render eclats
+function renderEclats() {
+  const container = document.getElementById('eclatContainer');
+  const count = getCompleted();
+  container.innerHTML = Array.from({ length: 7 }, (_, i) => {
+    const filled = i < count;
+    return `<button class="eclat-btn ${filled ? 'filled' : ''}" disabled>⭐</button>`;
+  }).join('');
+}
+
+function showModal(count) {
+  const modal = document.getElementById('modal');
+  document.getElementById('modalCount').textContent = count;
+  modal.classList.add('active');
+  setTimeout(() => modal.classList.remove('active'), 1500);
+}
+
+function startActivity(idx) {
+  // ❌ Bloquer si déjà complétée
+  if (isActivityDone(idx)) return alert('⭐ Cette activité est déjà complétée !');
+  
+  currentActivity = idx;
+  document.getElementById('homeScreen').classList.remove('active');
+  document.getElementById('secretScreen').classList.remove('active');
+  document.getElementById('activityScreen').classList.add('active');
+  document.getElementById('progressNum').textContent = idx + 1;
+  renderActivityContent(idx);
+  
+  // Messages vocaux pour chaque activité
+  const activityMessages = [
+    'Crée ta fiche magique !',
+    'Invente un sort unique !',
+    'Dessine ta constellation d\'étoiles !',
+    'Écris ta loi de mage !',
+    'Raconte ta nuit magique dans ton journal !',
+    'Découvre le personnage que tu es !',
+    'Teste tes connaissances avec le quiz final !'
+  ];
+  
+  setTimeout(function() {
+    speakVoice(activityMessages[idx]);
+  }, 500);
+}
+
+function renderActivityContent(idx) {
+  const content = document.getElementById('activityContent');
+  
+  if (idx === 0) {
+    content.innerHTML = `
+      <div class="form-group">
+        <label class="label">Ton Nom Magique</label>
+        <input id="f0" placeholder="Ex: Léo, Maé, Cassian">
+      </div>
+      <div class="form-group">
+        <label class="label">Couleur de ton Aura</label>
+        <input id="f1" placeholder="Ex: Or, Violet, Cyan">
+      </div>
+      <div class="form-group">
+        <label class="label">Ton Don Magique</label>
+        <textarea id="f2" placeholder="Décris brièvement ce que tu sais faire"></textarea>
+      </div>
+      <div class="btn-group">
+        <button class="btn secondary" onclick="goHome()">← Retour</button>
+        <button class="btn" onclick="completeActivity()">✓ Valider</button>
+      </div>
+    `;
+  } else if (idx === 1) {
+    content.innerHTML = `
+      <div class="form-group">
+        <label class="label">Ingrédients Magiques</label>
+        <textarea id="s0" placeholder="Ex: plume de corbeau, goutte de rosée, cendre de rêve"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="label">Effet Désiré</label>
+        <input id="s1" placeholder="Ex: transformer la peur en courage">
+      </div>
+      <button class="btn" onclick="generateSpell()" style="width: 100%; margin-bottom: 20px;">✨ Générer mon Sort</button>
+      <div id="spellResult"></div>
+      <div id="audioControlsSpell" style="display:none; margin-bottom:20px; padding:15px; background:rgba(123,94,167,0.2); border-radius:10px;">
+        <div style="margin-bottom:10px; font-size:12px; color:var(--LTVIO);">🔊 Écouter ton sort</div>
+        <div style="display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap;">
+          <button class="btn secondary" onclick="speakSpell('male')" style="flex:1; padding:8px; font-size:12px;">▶️ Voix Masculine</button>
+          <button class="btn secondary" onclick="speakSpell('female')" style="flex:1; padding:8px; font-size:12px;">▶️ Voix Féminine</button>
+          <button class="btn secondary" id="pauseBtn" onclick="pauseSpeech()" style="flex:1; padding:8px; font-size:12px;">⏸️ Pause</button>
+          <button class="btn secondary" onclick="stopSpeech()" style="flex:1; padding:8px; font-size:12px;">⏹️ Arrêter</button>
+        </div>
+      </div>
+      <div class="btn-group">
+        <button class="btn secondary" onclick="goHome()">← Retour</button>
+        <button class="btn" onclick="completeActivity()">✓ Valider</button>
+      </div>
+    `;
+  } else if (idx === 2) {
+    content.innerHTML = `
+      <label class="label">Dessine ta Constellation</label>
+      <canvas id="canvas"></canvas>
+      <div class="btn-group">
+        <button class="btn secondary" onclick="clearCanvas()">🗑️ Effacer</button>
+        <button class="btn secondary" onclick="goHome()">← Retour</button>
+        <button class="btn" onclick="completeActivity()">✓ Valider</button>
+      </div>
+    `;
+    setTimeout(initCanvas, 100);
+  } else if (idx === 3) {
+    content.innerHTML = `
+      <div class="form-group">
+        <label class="label">Ma Loi de Mage</label>
+        <textarea id="l0" placeholder="Écris la loi que tu ferais respecter..."></textarea>
+      </div>
+      <div id="lawResult"></div>
+      <div class="btn-group">
+        <button class="btn secondary" onclick="goHome()">← Retour</button>
+        <button class="btn" onclick="completeLaw()">✓ Valider</button>
+      </div>
+    `;
+  } else if (idx === 4) {
+    content.innerHTML = `
+      <div class="form-group">
+        <label class="label">La Nuit de la Lettre Magique</label>
+        <div style="font-size: 12px; color: var(--LTVIO); margin-bottom: 12px;">C'est la première nuit à l'Académie. Tu reçois une lettre magique. Qu'y a-t-il écrit ?</div>
+        <textarea id="j0" placeholder="Écris le message..."></textarea>
+      </div>
+      <div id="journalResult"></div>
+      <div class="btn-group">
+        <button class="btn secondary" onclick="goHome()">← Retour</button>
+        <button class="btn" onclick="completeJournal()">✓ Valider</button>
+      </div>
+    `;
+  } else if (idx === 5) {
+    content.innerHTML = `
+      <button class="btn" onclick="generateCharacter()" style="width: 100%; margin-bottom: 20px;">✨ Découvrir mon Essence</button>
+      <div id="charResult"></div>
+      <div id="audioControlsChar" style="display:none; margin-bottom:20px; padding:15px; background:rgba(123,94,167,0.2); border-radius:10px;">
+        <div style="margin-bottom:10px; font-size:12px; color:var(--LTVIO);">🔊 Écouter ton essence</div>
+        <div style="display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap;">
+          <button class="btn secondary" onclick="speakChar('male')" style="flex:1; padding:8px; font-size:12px;">▶️ Voix Masculine</button>
+          <button class="btn secondary" onclick="speakChar('female')" style="flex:1; padding:8px; font-size:12px;">▶️ Voix Féminine</button>
+          <button class="btn secondary" id="pauseBtn" onclick="pauseSpeech()" style="flex:1; padding:8px; font-size:12px;">⏸️ Pause</button>
+          <button class="btn secondary" onclick="stopSpeech()" style="flex:1; padding:8px; font-size:12px;">⏹️ Arrêter</button>
+        </div>
+      </div>
+      <div class="btn-group">
+        <button class="btn secondary" onclick="goHome()">← Retour</button>
+        <button class="btn" onclick="completeActivity()">✓ Valider</button>
+      </div>
+    `;
+  } else if (idx === 6) {
+    renderQuiz();
+  }
+}
+
+function completeActivity() {
+  // ✅ Ajouter activité à la Set (une seule fois par activité)
+  completedActivities.add(currentActivity);
+  const newCount = getCompleted();
+  
+  // Message vocal de félicitations avec prénom
+  const congratsMessages = [
+    'Bravo ' + userPrenom + ' ! Tu as déverrouillé l\'Éclat 1 !',
+    'Excellent ' + userPrenom + ' ! Tu as déverrouillé l\'Éclat 2 !',
+    'Magnifique ' + userPrenom + ' ! Tu as déverrouillé l\'Éclat 3 !',
+    'Superbe ' + userPrenom + ' ! Tu as déverrouillé l\'Éclat 4 !',
+    'Incroyable ' + userPrenom + ' ! Tu as déverrouillé l\'Éclat 5 !',
+    'Fantastique ' + userPrenom + ' ! Tu as déverrouillé l\'Éclat 6 !',
+    'Extraordinaire ' + userPrenom + ' ! Tu as déverrouillé l\'Éclat 7 !'
+  ];
+  
+  speakVoice(congratsMessages[currentActivity]);
+  
+  showModal(newCount);
+  setTimeout(() => goHome(), 1500);
+  
+  // Déverrouiller secret si 7 activités différentes complétées
+  if (newCount === 7) {
+    setTimeout(() => document.getElementById('floatingSecret').style.display = 'block', 500);
+  }
+}
+
+function generateSpell() {
+  const ingredients = document.getElementById('s0').value;
+  if (!ingredients) return;
+  const prefix = PREFIXES[Math.floor(Math.random() * PREFIXES.length)];
+  const suffix = SUFFIXES[Math.floor(Math.random() * SUFFIXES.length)];
+  const latin = MOTS_LATINS[Math.floor(Math.random() * MOTS_LATINS.length)];
+  const action = MOTS_ACTION[Math.floor(Math.random() * MOTS_ACTION.length)];
+  const gesture = GESTES[Math.floor(Math.random() * GESTES.length)];
+  const effect = document.getElementById('s1').value || 'une surprise magique';
+  
+  // Version pour l'écran (avec labels et mise en forme)
+  const spellDisplay = `Nom du sort : ${prefix} ${suffix}.\n\nMots magiques : "${latin} ${action}, ${ingredients.split(',')[0].trim()} révèle-toi !"\n\nGeste : ${gesture}.\n\nEffet : Tu sens la magie parcourir tes doigts. Une lumière douce apparaît, et ${effect.toLowerCase()} se produit.`;
+  
+  // Version nettoyée pour la TTS (juste le contenu, sans labels)
+  const spellForTTS = `${prefix} ${suffix}. ${latin} ${action}, ${ingredients.split(',')[0].trim()} révèle-toi ! ${gesture}. Tu sens la magie parcourir tes doigts. Une lumière douce apparaît, et ${effect.toLowerCase()} se produit.`;
+  
+  window.currentSpellText = spellForTTS;
+  document.getElementById('spellResult').innerHTML = `<div class="result-box">${spellDisplay}</div>`;
+  document.getElementById('audioControlsSpell').style.display = 'block';
+}
+
+function generateCharacter() {
+  const traits = ['des yeux qui changent de couleur', 'une mèche de cheveux brillante', 'des mains froides', 'une marque étoilée sur le front', 'des oreilles pointues', 'une cicatrice en forme de lune', 'des doigts qui brillent la nuit'];
+  const talents = ['sent la magie avant même de la voir', 'peut parler aux créatures magiques', 'voit l\'aura des mages autour de lui', 'entend les secrets chuchotés par le vent', 'peut invoquer les étoiles par son nom', 'transforme ses émotions en sorts', 'lit les souvenirs dans les objets'];
+  const motivations = ['découvrir un secret enfoui', 'retrouver un parent disparu', 'sauver l\'Académie d\'un danger caché', 'comprendre son vrai pouvoir', 'briser une malédiction ancienne', 'explorer les mondes interdits', 'trouver le trésor des sept vents'];
+  const forces = ['Tu es capable de choses extraordinaires', 'Ta bravoure inspire les autres', 'Ton intelligence te sauve toujours', 'Ton empathie te rend invincible', 'Ta créativité trouve des solutions impossibles', 'Ton courage ne faillira jamais', 'Ta loyauté te protège'];
+  const faiblesses = ['Tu doutes parfois de tes choix', 'Tu as peur de décevoir les autres', 'Tu te caches pour te protéger', 'Tu fais confiance trop vite', 'Tu ne crois pas en ta chance', 'Tu as peur de l\'inconnu', 'Tu relies tout à toi'];
+  
+  const selectedTrait = traits[Math.floor(Math.random() * traits.length)];
+  const selectedTalent = talents[Math.floor(Math.random() * talents.length)];
+  const selectedMotivation = motivations[Math.floor(Math.random() * motivations.length)];
+  const selectedForce = forces[Math.floor(Math.random() * forces.length)];
+  const selectedWeakness = faiblesses[Math.floor(Math.random() * faiblesses.length)];
+  
+  // Version pour l'écran (avec labels et emojis)
+  const charDisplay = `✨ Mage de l'Académie des Étoiles Brisées\n\nApparence : ${selectedTrait}.\n\nTalent unique : ${selectedTalent}.\n\nMotivation secrète : ${selectedMotivation}.\n\nForce : ${selectedForce}.\nFaiblesse : ${selectedWeakness}.`;
+  
+  // Version nettoyée pour la TTS (juste le contenu, sans labels)
+  const charForTTS = `Mage de l'Académie des Étoiles Brisées. Apparence : ${selectedTrait}. Talent unique : ${selectedTalent}. Motivation secrète : ${selectedMotivation}. Force : ${selectedForce}. Faiblesse : ${selectedWeakness}.`;
+  
+  window.currentCharText = charForTTS;
+  document.getElementById('charResult').innerHTML = `<div class="result-box">${charDisplay}</div>`;
+  document.getElementById('audioControlsChar').style.display = 'block';
+}
+
+function completeLaw() {
+  const law = document.getElementById('l0').value;
+  if (law.trim()) {
+    document.getElementById('lawResult').innerHTML = `<div class="result-box">« ${law} »</div>`;
+    completeActivity();
+  }
+}
+
+function completeJournal() {
+  const journal = document.getElementById('j0').value;
+  if (journal.trim()) {
+    document.getElementById('journalResult').innerHTML = `<div class="result-box">📜 ${journal}</div>`;
+    completeActivity();
+  }
+}
+
+let canvas, ctx;
+let constellationPoints = [];
+
+function initCanvas() {
+  canvas = document.getElementById('canvas');
+  if (!canvas) return;
+  
+  // 🔧 Définir dimensions RÉELLES du canvas
+  canvas.width = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+  
+  constellationPoints = [];
+  ctx = canvas.getContext('2d');
+  
+  drawCanvas();
+  
+  // Clic/Tap : ajouter un point
+  canvas.addEventListener('click', (e) => addPoint(e));
+  canvas.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    if (e.touches.length === 0) {
+      const touch = e.changedTouches[0];
+      const rect = canvas.getBoundingClientRect();
+      constellationPoints.push({
+        x: touch.clientX - rect.left,
+        y: touch.clientY - rect.top
+      });
+      drawCanvas();
+    }
+  });
+}
+
+function addPoint(e) {
+  const rect = canvas.getBoundingClientRect();
+  constellationPoints.push({
+    x: e.clientX - rect.left,
+    y: e.clientY - rect.top
+  });
+  drawCanvas();
+}
+
+function drawCanvas() {
+  ctx.fillStyle = '#0A0818';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+  // Étoiles de fond
+  ctx.fillStyle = '#F0D87A';
+  for (let i = 0; i < 50; i++) {
+    ctx.fillRect(Math.random() * canvas.width, Math.random() * canvas.height, 2, 2);
+  }
+  
+  if (constellationPoints.length === 0) return;
+  
+  // Tracer lignes entre points
+  if (constellationPoints.length > 1) {
+    ctx.strokeStyle = '#C9A84C';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(constellationPoints[0].x, constellationPoints[0].y);
+    for (let i = 1; i < constellationPoints.length; i++) {
+      ctx.lineTo(constellationPoints[i].x, constellationPoints[i].y);
+    }
+    ctx.stroke();
+  }
+  
+  // Tracer points
+  ctx.fillStyle = '#F0D87A';
+  constellationPoints.forEach(p => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#C9A84C';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  });
+}
+
+function clearCanvas() {
+  constellationPoints = [];
+  drawCanvas();
+}
+
+const QUIZ = [
+  { q: 'Comment s\'appelle la sœur de Léo ?', o: ['Luna', 'Maé', 'Virela'], a: 1 },
+  { q: 'Quelle couleur s\'allume pour Maé ?', o: ['Violet', 'Bleu', 'Or'], a: 2 },
+  { q: 'Combien d\'éclats faut-il rassembler ?', o: ['Cinq', 'Sept', 'Douze'], a: 1 },
+  { q: 'Qui a brisé l\'Étoile Mère ?', o: ['Virela', 'Léo', 'Aldovar'], a: 2 },
+  { q: 'Quelle est la réponse à l\'énigme ?', o: ['La lumière', 'La confiance', 'L\'espoir'], a: 1 }
+];
+
+let quizIdx = 0, quizAttempts = 0, quizScore = 0;
+let userPrenom = localStorage.getItem('userPrenom') || 'Apprenti';
+
+function speakVoice(text) {
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'fr-FR';
+  utterance.rate = 0.9;
+  window.speechSynthesis.speak(utterance);
+}
+
+function renderQuiz() {
+  const content = document.getElementById('activityContent');
+  if (quizIdx >= QUIZ.length) {
+    content.innerHTML = `<div style="text-align: center; padding: 40px 20px;">
+      <div style="font-size: 50px; margin-bottom: 20px;">🎉</div>
+      <div style="font-size: 16px; color: var(--LTVIO); line-height: 1.6; margin-bottom: 20px;">Bravo ${userPrenom} ! Tu as réussi le Quiz !</div>
+      <div class="btn-group" style="margin-top: 30px;">
+        <button class="btn secondary" onclick="goHome()" style="width: 100%;">← Retour</button>
+      </div>
+    </div>`;
+    completeActivity();
+    return;
+  }
+  
+  const q = QUIZ[quizIdx];
+  quizAttempts = 0;
+  
+  content.innerHTML = `
+    <div style="margin-bottom: 16px; color: var(--LTVIO); font-size: 12px;">Question ${quizIdx + 1}/${QUIZ.length}</div>
+    <div class="quiz-question">${q.q}</div>
+    <div class="quiz-options">
+      ${q.o.map((o, i) => `<button class="quiz-option" onclick="answerQuiz(${i})">${o}</button>`).join('')}
+    </div>
+    <div class="btn-group" style="margin-top: 30px;">
+      <button class="btn secondary" onclick="goHome()" style="width: 100%;">← Retour</button>
+    </div>
+  `;
+}
+
+function answerQuiz(idx) {
+  quizAttempts++;
+  const isCorrect = idx === QUIZ[quizIdx].a;
+  
+  if (isCorrect) {
+    // Bonne réponse
+    speakVoice('Bravo ' + userPrenom + ' !');
+    quizScore++;
+    quizIdx++;
+    setTimeout(renderQuiz, 1500);
+  } else {
+    // Mauvaise réponse
+    if (quizAttempts === 1) {
+      speakVoice('Essaie encore !');
+      renderQuiz();
+    } else if (quizAttempts === 2) {
+      speakVoice('Courage ' + userPrenom + ', tu y es presque !');
+      renderQuiz();
+    } else if (quizAttempts === 3) {
+      // Modale "langue au chat"
+      showLangueChatModal();
+    } else if (quizAttempts >= 4) {
+      // Dommage, à bientôt
+      speakVoice('Dommage, à bientôt !');
+      setTimeout(function() {
+        document.getElementById('activityScreen').classList.remove('active');
+        document.getElementById('homeScreen').classList.add('active');
+      }, 2000);
+    }
+  }
+}
+
+function isFemininePrenom(prenom) {
+  const femEnds = ['a', 'e', 'ie', 'elle', 'ette', 'ine', 'ique'];
+  return femEnds.some(end => prenom.toLowerCase().endsWith(end));
+}
+
+function showLangueChatModal() {
+  const isFem = isFemininePrenom(userPrenom);
+  const modal = document.createElement('div');
+  modal.id = 'quizLangueChatModal';
+  modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; display: flex; align-items: center; justify-content: center;';
+  modal.innerHTML = `<div style="background: #1a0f2e; border: 4px solid #C9A84C; padding: 40px; border-radius: 16px; text-align: center; max-width: 85%;">
+    <p style="color: #F0D87A; font-size: 18px; margin-bottom: 20px; font-weight: bold;">Tu donnes ta langue au chat ?</p>
+    <div style="display: flex; gap: 15px; justify-content: center;">
+      <button onclick="quizLangueChatYes()" style="background: #C9A84C; color: #0A0818; padding: 12px 24px; border: none; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer;">OUI</button>
+      <button onclick="quizLangueChatNo()" style="background: #7B5EA7; color: #FDF8EE; padding: 12px 24px; border: none; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer;">NON</button>
+    </div>
+  </div>`;
+  document.body.appendChild(modal);
+}
+
+function quizLangueChatYes() {
+  const modal = document.getElementById('quizLangueChatModal');
+  if (modal) modal.remove();
+  
+  // Afficher la réponse correcte 3 sec
+  const q = QUIZ[quizIdx];
+  const correctAnswer = q.o[q.a];
+  
+  const answerModal = document.createElement('div');
+  answerModal.id = 'quizAnswerModal';
+  answerModal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; display: flex; align-items: center; justify-content: center;';
+  answerModal.innerHTML = `<div style="background: #1a0f2e; border: 4px solid #C9A84C; padding: 40px; border-radius: 16px; text-align: center; max-width: 85%;">
+    <p style="color: #F0D87A; font-size: 18px; margin-bottom: 20px; font-weight: bold;">✓ La bonne réponse :</p>
+    <p style="color: #C9A84C; font-size: 22px; font-weight: bold;">${correctAnswer}</p>
+  </div>`;
+  document.body.appendChild(answerModal);
+  
+  setTimeout(function() {
+    answerModal.remove();
+    quizAttempts = 0;
+    renderQuiz();
+  }, 3000);
+}
+
+function quizLangueChatNo() {
+  const modal = document.getElementById('quizLangueChatModal');
+  if (modal) modal.remove();
+  
+  const isFem = isFemininePrenom(userPrenom);
+  const suffix = isFem ? 'e' : '';
+  speakVoice('Tu es un' + suffix + ' warrior ' + userPrenom + ' !');
+  
+  // Rester sur la question actuelle
+  setTimeout(renderQuiz, 2000);
+}
+
+function showSecret() {
+  document.getElementById('homeScreen').classList.remove('active');
+  document.getElementById('activityScreen').classList.remove('active');
+  document.getElementById('secretScreen').classList.add('active');
+}
+
+function goHome() {
+  currentActivity = null;
+  quizIdx = 0;
+  quizScore = 0;
+  document.getElementById('homeScreen').classList.add('active');
+  document.getElementById('activityScreen').classList.remove('active');
+  document.getElementById('secretScreen').classList.remove('active');
+  renderEclats();
+  renderGrid();
+}
+
+// ====== LECTEUR AUDIO TTS AVEC PAUSE DEPUIS LE POINT D'ARRÊT ======
+let currentUtterance = null;
+let isPaused = false;
+let currentText = '';
+let currentGender = '';
+let textSentences = [];
+let currentSentenceIndex = 0;
+
+function speakSpell(gender) {
+  const text = window.currentSpellText;
+  if (!text) return;
+  currentText = text;
+  currentGender = gender;
+  textSentences = splitIntoSentences(text);
+  currentSentenceIndex = 0;
+  speakSentence(0, gender);
+}
+
+function speakChar(gender) {
+  const text = window.currentCharText;
+  if (!text) return;
+  currentText = text;
+  currentGender = gender;
+  textSentences = splitIntoSentences(text);
+  currentSentenceIndex = 0;
+  speakSentence(0, gender);
+}
+
+function splitIntoSentences(text) {
+  // Diviser par points, points d'exclamation, points d'interrogation et sauts de ligne
+  return text
+    .split(/([.!?\n]+)/)
+    .filter(s => s.trim())
+    .reduce((acc, curr, idx, arr) => {
+      if (idx % 2 === 0) {
+        acc.push(curr + (arr[idx + 1] || ''));
+      }
+      return acc;
+    }, [])
+    .filter(s => s.trim());
+}
+
+function speakSentence(index, gender) {
+  if (index >= textSentences.length) {
+    isPaused = false;
+    return;
+  }
+  
+  currentSentenceIndex = index;
+  const text = textSentences[index];
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'fr-FR';
+  
+  if (gender === 'female') {
+    utterance.pitch = 1.5;
+    utterance.rate = 0.95;
+  } else {
+    utterance.pitch = 0.4;
+    utterance.rate = 0.85;
+  }
+  
+  const voices = window.speechSynthesis.getVoices();
+  const frenchVoice = voices.find(v => v.lang.startsWith('fr')) || voices[0];
+  utterance.voice = frenchVoice;
+  utterance.volume = 1;
+  
+  // Quand cette phrase est finie, passer à la suivante
+  utterance.onend = () => {
+    if (!isPaused) {
+      speakSentence(index + 1, gender);
+    }
+  };
+  
+  currentUtterance = utterance;
+  window.speechSynthesis.speak(utterance);
+}
+
+function pauseSpeech() {
+  if (isPaused) {
+    // Reprendre depuis la position actuelle
+    isPaused = false;
+    window.speechSynthesis.cancel();
+    speakSentence(currentSentenceIndex, currentGender);
+  } else {
+    // Mettre en pause
+    isPaused = true;
+    window.speechSynthesis.cancel();
+  }
+  updatePauseButton();
+}
+
+function updatePauseButton() {
+  const btn = document.getElementById('pauseBtn');
+  if (btn) {
+    btn.textContent = isPaused ? '▶️ Reprendre' : '⏸️ Pause';
+  }
+}
+
+function stopSpeech() {
+  window.speechSynthesis.cancel();
+  currentUtterance = null;
+  isPaused = false;
+  currentText = '';
+  currentGender = '';
+  textSentences = [];
+  currentSentenceIndex = 0;
+}
+
+// Newsletter
+function toggleNewsletter() {
+  const form = document.getElementById('newsletterForm');
+  if (form.style.display === 'none') {
+    form.style.display = 'block';
+  } else {
+    form.style.display = 'none';
+  }
+}
+
+const PUBLIC_APP_URL = 'https://carnet-de-lapprenti-mage.vercel.app';
+
+function shareApp() {
+  const modal = document.getElementById('shareQrModal');
+  const qr = document.getElementById('shareQRCode');
+
+  qr.innerHTML = '';
+
+  // QR code généré directement dans le navigateur
+  if (typeof QRCode !== 'undefined') {
+    new QRCode(qr, {
+      text: PUBLIC_APP_URL,
+      width: 200,
+      height: 200,
+      colorDark: '#0A0818',
+      colorLight: '#FFFFFF',
+      correctLevel: QRCode.CorrectLevel.H
+    });
+  } else {
+    qr.innerHTML = '<div style="color:#0A0818;font-size:12px;padding:20px;">QR code indisponible. Utilise le lien ci-dessous.</div>';
+  }
+
+  modal.classList.add('active');
+}
+
+function closeShareQr(event) {
+  if (!event || event.target === document.getElementById('shareQrModal')) {
+    document.getElementById('shareQrModal').classList.remove('active');
+  }
+}
+
+function shareVercelLink() {
+  const shareData = {
+    title: "Carnet de l'Apprenti Mage",
+    text: "Rejoins-moi dans L'Académie des Étoiles Brisées !",
+    url: PUBLIC_APP_URL
+  };
+
+  if (navigator.share) {
+    navigator.share(shareData).catch(() => {});
+  } else {
+    copyVercelLink();
+  }
+}
+
+function copyVercelLink() {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(PUBLIC_APP_URL).then(() => {
+      alert('Lien copié ! 📋');
+    }).catch(() => {
+      fallbackCopyLink();
+    });
+  } else {
+    fallbackCopyLink();
+  }
+}
+
+function fallbackCopyLink() {
+  const input = document.createElement('input');
+  input.value = PUBLIC_APP_URL;
+  document.body.appendChild(input);
+  input.select();
+  document.execCommand('copy');
+  input.remove();
+  alert('Lien copié ! 📋');
+}
+
+function savePrenomAndStart() {
+  const prenomInput = document.getElementById('prenomInput');
+  const prenom = prenomInput.value.trim();
+  
+  if (prenom.length === 0) {
+    alert('Écris ton prénom ! 📝');
+    return;
+  }
+  
+  userPrenom = prenom;
+  localStorage.setItem('userPrenom', prenom);
+  
+  // Cacher la modale
+  document.getElementById('prenomModal').style.display = 'none';
+  
+  // Afficher l'accueil
+  document.getElementById('homeScreen').classList.add('active');
+  
+  // Salutation vocale
+  setTimeout(function() {
+    speakVoice('Bonjour ' + userPrenom + ' ! Prêt à déverrouiller les 7 Éclats ?');
+  }, 300);
+}
+
+// Initialize
+initStars();
+renderEclats();
+renderGrid();
+
+// Toujours afficher la modale de prénom au démarrage
+document.getElementById('prenomModal').style.display = 'flex';
+document.getElementById('prenomInput').focus();
+
+// Si un prénom existait, le pré-remplir
+if (localStorage.getItem('userPrenom')) {
+  document.getElementById('prenomInput').value = localStorage.getItem('userPrenom');
+}
+</script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</body>
+</html>
